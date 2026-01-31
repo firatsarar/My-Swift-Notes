@@ -205,3 +205,159 @@ default:
 let passingGrade = 1...4
 
 print(passingGrade)
+
+// DÖNGÜLER
+// --------------------------------------------
+
+
+var numberss = 1...5 // 1 ile 5 arasında bir sayı aralığı tanımlanır
+
+for number in numberss {  // numbers içindeki her değeri sırayla alır
+    print(numbers)        // o anki değeri ekrana yazdırır
+}
+
+// Şarkıcı isimlerini tutan bir dizi (array) oluşturulur
+var singers: [String] = ["The Weeknd", "Travis Scott", "SZA", "Billie Eilish"]
+
+for singer in singers { // Dizideki her bir şarkıcıyı sırayla alır
+    print("The singer is \(singer)") // Şarkıcı adını yazdırır
+}
+
+// Değer kullanılmayacaksa `_` tercih edilir
+for _ in 1...5 {        // Sadece 5 kez çalışması istenir
+    print("Play")       // Her turda "Play" yazdırılır
+}
+// numbers kullanılsaydı sonuç yine aynı olurdu
+
+
+// WHILE
+// --------------------------------------------
+
+var number1 = 1 // Başlangıç değeri 1 olan değişken
+
+while number1 <= 10 {  // Koşul sağlandığı sürece döngü devam eder
+    print(number1)     // Mevcut değeri yazdırır
+    number1 += 1       // Değeri 1 artırır
+}
+
+// Geri sayım örneği
+var countdown = 10
+
+while countdown >= 0 { // 0’a ulaşana kadar çalışır
+    print(countdown)   // Mevcut değeri yazdırır
+    countdown -= 1     // Değeri 1 azaltır
+}
+
+print("Zaman tükendi")
+
+
+// REPEAT - WHILE
+// --------------------------------------------
+
+var number2 = 5 // Başlangıç değeri 5 olan değişken
+
+repeat {
+    print(number2)     // Önce çalışır
+    number2 -= 1       // Sonra değer azaltılır
+} while number2 >= 0   // Koşul en sonda kontrol edilir
+
+
+// BREAK
+// --------------------------------------------
+
+var number3 = 8 // Başlangıç değeri 8 olan değişken
+
+while number3 >= 0 {        // 0’a kadar geri sayar
+    print(number3)
+    number3 -= 1
+    if number3 == 2 {       // Değer 2 olunca
+        print("2 de durdu")
+        break               // Döngüyü tamamen durdurur
+    }
+}
+
+// Etiketli (labeled) iç içe döngü örneği
+diskatman: for i in 1...10 {        // Dış döngü
+    ickatman: for j in 1...10 {     // İç döngü
+        print("\(i) * \(j) = \(i*j)")
+        if i * j == 50 {            // Sonuç 50 olursa
+            print("50 yi buldun")
+            break diskatman         // Doğrudan dış döngüden çıkar
+        }
+        // Sadece `break` yazılsaydı yalnızca iç döngü dururdu
+    }
+}
+
+
+// CONTINUE
+// --------------------------------------------
+
+// 1–10 arasındaki çift sayıları yazdırır
+for i in 1...10 {
+    if i % 2 == 1 {   // Tek sayıysa
+        continue      // Bu tur atlanır
+    }
+    print(i)
+}
+
+// 1–10 arasındaki tek sayıları yazdırır
+for i in 1...10 {
+    if i % 2 == 0 {   // Çift sayıysa
+        continue
+    }
+    print(i)
+}
+
+
+// SONSUZ DÖNGÜ
+// --------------------------------------------
+
+var songLength = 300 // Şarkı süresini temsil eden sayaç
+
+while true {         // Manuel olarak durdurulana kadar çalışır
+    print(". ")
+    songLength -= 1
+    if songLength == 0 {
+        break        // Güvenli çıkış noktası
+    }
+}
+
+func sayHello() {
+    let helloText = """
+        Merhaba. Ben Fırat. Burada ilk fonksiyon testimi yapıyorum
+        """
+    print(helloText)
+}
+
+sayHello()
+
+func karesiniAl(number: Int) {
+    print(number * number)
+}
+karesiniAl(number: 5)
+
+func countBand(names : [String]) {
+    for name in names {
+        print("Üyelerden birisi \(name).")
+    }
+}
+
+countBand(names: ["Fırat", "Emir", "Zeynep", "Ayşe"])
+
+func calculateCube(number: Int) -> Int {
+    return number * number * number
+}
+
+let cube = calculateCube(number: 3)
+print(cube)
+
+func aritmeticAverage(number: [Int]) -> Int {
+    return number.reduce(0, +) / number.count
+}
+let average = aritmeticAverage(number: [1, 2, 3, 4, 10])
+print(average)
+
+func getUser() -> (first: String, midName: String, last: String) {
+    (first: "Fırat", midName: "Emir", last: "Kaya")
+}
+
