@@ -361,3 +361,65 @@ func getUser() -> (first: String, midName: String, last: String) {
     (first: "Fırat", midName: "Emir", last: "Kaya")
 }
 
+//-Closure ----------- ---------- -------- ------- ----- ---- -- - -
+//Clouser fonksiyon gibi çalışır fakat bilgi saklar.
+let driving = {
+    print("I'm Driving")
+}
+
+driving() //I'm Driving
+
+var ClosureTotal = 0  //Clouser için örnek bir değişken atadım
+var total2 = 0 //func için örnek bir değişken daha
+
+@MainActor func addTotalFunc() {
+    total2 += 1
+    print(total2)
+}
+addTotalFunc() //1
+addTotalFunc()//1  -  Sonuç hep aynı çünkü func data tutmaz
+
+let addTotal = {
+    ClosureTotal += 1
+    print(ClosureTotal)
+}
+
+addTotal()  //1
+addTotal()  //2  -  Sonuç sürekli değişiyor çünkü clouser data saklar
+
+
+//place adında String parametreli bir clouser örneği. in koyduğum için datayı saklamakla kalmayıp geri dönüş te yapıyor.
+let drivingWithReturn = { (place: String) -> String
+    in
+    return "Im driving to the \(place)"
+}
+
+//Burada ayrı bir clouser ile önceki clouser ı çağırıp döndürdüğü datayı kullandım
+let message = drivingWithReturn("London")
+
+print(message) //Im driving to the London
+
+//Trailing clouser syntax örneği
+func travel(action: () -> Void) {
+    print("ilk işlem") //Burada fonksiyonun başı
+    action()
+    print("Son işlem")  //Ve sonu belli
+} //fakat ortadaki action kısmı void bir parametre olduğu için belirsiz
+
+travel {
+    print("Ortadaki işlem") //fonksiyonu kullanarak ortadaki işlemi esnekleştirebilirim
+}
+
+//Çok basit bir örnek. Para çekerken sistemin başı ve sonu bellidir. Fakat çekkmek istediğiniz miktar sürekli değişkendir.
+func paraCek(transaction: () -> Void) {
+    print("kart yerleştirildi")
+    transaction()
+    print("kart çıkartıldı")
+}
+var miktar = 50
+paraCek {
+    print("kullanıcı \(miktar) TL para çekti.")
+}
+//Yukarıda fonksiyonun içine Void bir closure eklediğim için sistemin içindeki transaction bloğunu istediğim gibi değiştirebilirim.
+
+
