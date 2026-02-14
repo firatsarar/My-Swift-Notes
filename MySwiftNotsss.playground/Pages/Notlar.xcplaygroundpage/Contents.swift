@@ -423,3 +423,865 @@ paraCek {
 //Yukarıda fonksiyonun içine Void bir closure eklediğim için sistemin içindeki transaction bloğunu istediğim gibi değiştirebilirim.
 
 
+// MARK: - Closure Parametreli Fonksiyon Örnekleri
+
+// Parametre olarak bir closure alan fonksiyon
+// action: String parametre alıp hiçbir şey döndürmeyen (Void) bir closure
+func travel(action: (String) -> Void) {
+    print("Im getting ready to go")
+    // Closure'ı çağır ve "London" parametresini gönder
+    action("London")
+    print("Im arrived")
+}
+
+// Fonksiyonu trailing closure syntax ile çağırma
+// Closure parametresinin tipini açıkça belirtiyoruz
+travel { (place: String) in
+    print("Im going to \(place)")
+}
+
+
+// MARK: - Değer Döndüren Closure Örneği
+
+// String parametre alıp String döndüren bir closure alan fonksiyon
+func travel2(action: (String) -> String) {
+    print("Im preparing")
+    // Closure'ı çağır ve dönen değeri description değişkenine ata
+    let description = action("London")
+    print(description)
+    print("Im arrived")
+}
+
+// Tam syntax ile closure kullanımı
+// Parametre tipi, dönüş tipi ve return anahtar kelimesi açıkça belirtilmiş
+travel2 { (place: String) -> String in
+    return "Im going to \(place) in my car"
+}
+
+// Kısaltılmış syntax kullanımı
+// Swift tip çıkarımı sayesinde tipler ve return anahtar kelimesi ihmal edilebilir
+// Tek satırlık closure'larda return otomatik olarak eklenir
+travel2 { place in
+    "Im going to \(place)"
+}
+
+
+// MARK: - Closure ile Capture (Yakalama) Örneği
+
+// Closure döndüren bir fonksiyon
+// Dönüş tipi: Parametre almayan ve Void döndüren bir closure
+func testOlustur() -> () -> Void {
+    // Yerel değişkenler
+    var kullanilan = 10
+    var kullanilmayan = 20
+    
+    // Closure döndür
+    // Bu closure, sadece 'kullanilan' değişkenini "capture" (yakalar) eder
+    // 'kullanilmayan' değişkeni closure içinde kullanılmadığı için yakalanmaz
+    return {
+        print(kullanilan)
+    }
+}
+
+// --------------------------------------------------
+// MARK: - CLOSURE (Fonksiyon parametresi olarak)
+// --------------------------------------------------
+
+// 1️⃣ Parametre alan ve String dönen closure
+func travel3(action: (String, Int) -> String) {
+    print("Im preparing")                 // İşlem öncesi
+    let description = action("London", 80) // Closure çağrılıyor
+    print(description)                    // Closure'dan gelen sonuç
+    print("Im done")                      // İşlem sonrası
+}
+
+// Trailing closure kullanımı
+travel3 {
+    "Im going to \($0) with \($1) kmph"
+}
+
+
+// 2️⃣ Tek parametreli closure
+func goingSchool(school: (String) -> String) {
+    print("Im preparing for the school")
+    let vehicle = school("bus")
+    print(vehicle)
+    print("I arrived to school")
+}
+
+goingSchool {
+    "Im going to school with the \($0)."
+}
+
+
+// 3️⃣ İki parametreli closure
+func moneyTransfer(account: (String, Int) -> String) {
+    print("Para hesaplanıyor...")
+    let result = account("Fırat Sarar", 5000)
+    print(result)
+    print("İşlem tamamlandı.")
+}
+
+moneyTransfer {
+    "\($0) hesabına \($1) TL para transferi gerçekleşti."
+}
+
+
+// 4️⃣ Üç parametreli closure
+func winner(account: (String, Int, Int) -> String) {
+    print("Yarışma bitti.")
+    let win = account("Ahmet", 50, 1)
+    print(win)
+    print("Ödül verildi")
+}
+
+winner {
+    "\($0) \($1) puan ile yarışmayı \($2). bitirdi"
+}
+
+
+// --------------------------------------------------
+// MARK: - Fonksiyonun closure döndürmesi
+// --------------------------------------------------
+
+// Fonksiyon bir closure döndürüyor
+func travelTo() -> (String) -> Void {
+    return {
+        print("Im going to \($0)")
+    }
+}
+
+let travel = travelTo()
+travel("London")   // Closure çağrısı
+
+// Tek satırda çağırma
+travelTo()("Antalya")
+
+
+// Çok parametreli closure döndürme
+func readBook() -> (String, String, Int) -> Void {
+    return {
+        print("I bought a book named \($0) from \($1). It's \($2) USD.")
+    }
+}
+
+let reading = readBook()
+reading("The Swarm", "Frank Schatzing", 10)
+
+
+// --------------------------------------------------
+// MARK: - Closure içinde state saklama (Capture)
+// --------------------------------------------------
+
+func traveledTo() -> (String) -> Void {
+    var counter = 1   // Closure bu değişkeni hafızada tutar
+    
+    return {
+        print("\(counter)- \($0).")
+        counter += 1
+    }
+}
+
+let travelCounter = traveledTo()
+travelCounter("Antalya")
+travelCounter("London")
+travelCounter("Izmir")
+
+
+// --------------------------------------------------
+// MARK: - Struct Temelleri
+// --------------------------------------------------
+
+struct Degree {
+    var temperature: Int
+}
+
+let temp = Degree(temperature: 30)
+print("Bugün hava \(temp.temperature) derece.")
+
+
+// Struct kopyalama davranışı (Value Type)
+struct Person {
+    var name: String
+    var age: Int
+}
+
+var person1 = Person(name: "Emir", age: 25)
+var person2 = Person(name: "Zeynep", age: 30)
+
+person1 = person2   // Değer kopyalanır
+
+
+// --------------------------------------------------
+// MARK: - Computed Property
+// --------------------------------------------------
+
+struct Sport {
+    var name: String
+    var isOlympicSport: Bool
+    
+    // Hesaplanan özellik
+    var olympicStatus: String {
+        if isOlympicSport {
+            return "\(name) is an olympic sport."
+        } else {
+            return "\(name) is not an olympic sport."
+        }
+    }
+}
+
+let football = Sport(name: "Football", isOlympicSport: false)
+print(football.olympicStatus)
+
+
+// Adult kontrolü
+struct AdultAge {
+    var name: String
+    var age: Int
+    
+    var isAdult: Bool {
+        age >= 18
+    }
+    
+    var adultStatus: String {
+        isAdult ? "Yes, \(name) is an adult" :
+                  "No, \(name) is not an adult"
+    }
+}
+
+
+// --------------------------------------------------
+// MARK: - Property Observer (didSet)
+// --------------------------------------------------
+
+struct Progress {
+    var taskName: String
+    var amount: Int {
+        didSet {
+            if amount < 100 {
+                print("\(taskName) devam ediyor: \(amount)%")
+            } else {
+                print("\(taskName) tamamlandı.")
+            }
+        }
+    }
+}
+
+var progress = Progress(taskName: "İndirme", amount: 0)
+progress.amount = 50
+progress.amount = 100
+
+
+// --------------------------------------------------
+// MARK: - Method Kullanımı
+// --------------------------------------------------
+
+struct MonthlyIncome {
+    var people: Int
+    var salary: Int
+    
+    func income() -> Int {
+        salary * people
+    }
+}
+
+let income1 = MonthlyIncome(people: 5, salary: 23000)
+print(income1.income())
+
+
+// --------------------------------------------------
+// MARK: - Skill Level Sistemi
+// --------------------------------------------------
+
+struct LearningSwiftProgress {
+    var languageName: String
+    
+    var progress: Int {
+        didSet {
+            switch progress {
+            case 0..<20:
+                print("Beginner")
+            case 20...50:
+                print("Mid")
+            case 51...85:
+                print("Expert")
+            default:
+                print("Senior")
+            }
+        }
+    }
+}
+
+var coder = LearningSwiftProgress(languageName: "Swift", progress: 32)
+coder.progress = 89
+
+
+// --------------------------------------------------
+// MARK: - String Fonksiyonları
+// --------------------------------------------------
+
+var string = "Hi my name is Fırat and Im 27 years old."
+
+print(string.count)                // Karakter sayısı
+print(string.uppercased())         // Büyük harf
+print(string.lowercased())         // Küçük harf
+print(string.hasPrefix("Hi"))      // Başlangıç kontrol
+print(string.hasSuffix("old."))    // Bitiş kontrol
+print(string.contains("Fırat"))    // İçeriyor mu
+
+
+// --------------------------------------------------
+// MARK: - Array Temelleri
+// --------------------------------------------------
+
+var toys = ["SpiderMan"]
+
+toys.append("Xmen")     // Eleman ekleme
+print(toys.sorted())    // Alfabetik sıralama
+toys.remove(at: 1)      // Index ile silme
+print(toys.count)       // Eleman sayısı
+
+
+// MARK: - Temel Init Örneği
+struct Phone {
+    var brand: String
+    var price: Int
+    var storage: Int
+    
+    // Parametresiz init - varsayılan değerler
+    init() {
+        brand = "iPhone"
+        price = 30000
+        storage = 128
+    }
+}
+
+// MARK: - Çoklu Init Örneği
+struct Coffee {
+    var name: String
+    var size: String
+    var price: Double
+    
+    // Varsayılan init
+    init() {
+        name = "Americano"
+        size = "Medium"
+        price = 15.0
+    }
+    
+    // Parametreli init
+    init(name: String, size: String, price: Double) {
+        self.name = name
+        self.size = size
+        self.price = price
+    }
+}
+
+let coffee1 = Coffee(name: "Espresso", size: "Large", price: 13.0)
+print("Kahve: \(coffee1.name), Boyut: \(coffee1.size), Fiyat: \(coffee1.price)₺")
+
+// MARK: - Init İçinde Koşullu Mantık
+struct BankAccount {
+    var accountNumber: String
+    var balance: Double
+    var isActive: Bool
+    
+    init(accountNumber: String, initialDeposit: Double) {
+        self.accountNumber = accountNumber
+        self.balance = initialDeposit
+        // Ternary operator ile daha temiz
+        self.isActive = initialDeposit > 1000
+    }
+    
+    func displayInfo() {
+        print("Hesap: \(accountNumber), Bakiye: \(balance)₺, Aktif: \(isActive ? "Evet" : "Hayır")")
+    }
+}
+
+let account1 = BankAccount(accountNumber: "TR123", initialDeposit: 1500)
+account1.displayInfo()
+
+// MARK: - Computed Property Örneği (Area stored değil computed olmalı)
+struct Rectangle {
+    var width: Double
+    var height: Double
+    
+    // Computed property - her çağrıldığında hesaplanır
+    var area: Double {
+        return width * height
+    }
+    
+    // Normal init
+    init(width: Double, height: Double) {
+        self.width = width
+        self.height = height
+    }
+    
+    // Kare için convenience init
+    init(squareSide: Double) {
+        self.width = squareSide
+        self.height = squareSide
+    }
+    
+    func displayArea() {
+        print("Alan: \(area) birim kare")
+    }
+}
+
+let rect = Rectangle(width: 5, height: 10)
+rect.displayArea()
+
+let square = Rectangle(squareSide: 5)
+square.displayArea()
+
+// MARK: - Validasyon ile Init
+struct Temperature {
+    var celsius: Double // İngilizce doğru yazımı "celsius"
+    
+    // Computed property
+    var fahrenheit: Double {
+        return (celsius * 9/5) + 32
+    }
+    
+    init(celsius: Double) {
+        // Mutlak sıfırın altına izin verme
+        if celsius < -273.15 {
+            self.celsius = -273.15
+            print("⚠️ Uyarı: Mutlak sıfırın altına ayarlanamaz. -273.15°C olarak ayarlandı.")
+        } else {
+            self.celsius = celsius
+        }
+    }
+    
+    func display() {
+        print("Sıcaklık: \(celsius)°C / \(fahrenheit)°F")
+    }
+}
+
+let antalya = Temperature(celsius: 23)
+antalya.display()
+
+let invalidTemp = Temperature(celsius: -300) // Validasyon çalışacak
+invalidTemp.display()
+
+// MARK: - İsimlendirme Tutarlılığı
+struct Personal {
+    var name: String
+    
+    init(name: String) {
+        self.name = name
+        // Init içinde print kullanmak genelde önerilmez
+        // Ama eğitim amaçlı bırakıldı
+        print("\(name) adlı kişi oluşturuldu.")
+    }
+}
+
+let personal1 = Personal(name: "Fırat")
+
+// MARK: - Lazy Property Örneği
+struct FamilyTree {
+    init() {
+        print("🌳 Aile ağacı oluşturuldu.")
+    }
+}
+
+struct PersonWithFamily {
+    var name: String
+    
+    // Lazy: İlk erişimde oluşturulur
+    lazy var familyTree = FamilyTree()
+    
+    init(name: String) {
+        self.name = name
+        print("\(name) adlı kişi oluşturuldu (aile ağacı henüz yüklenmedi)")
+    }
+}
+
+var firat = PersonWithFamily(name: "Fırat")
+print("Aile ağacına erişiliyor...")
+firat.familyTree // İlk erişimde FamilyTree init'i çalışacak
+firat.familyTree // İkinci erişimde init çalışmayacak
+
+// MARK: - Lazy Property ile Expensive Operation
+struct Website {
+    var url: String
+    var content: String
+    
+    init(url: String, content: String) {
+        self.url = url
+        self.content = content
+    }
+    
+    func load() {
+        print("🌐 \(content) sayfası \(url) adresinden yükleniyor...")
+    }
+}
+
+let website1 = Website(url: "www.apple.com", content: "Apple Inc.")
+website1.load()
+
+// MARK: - Lazy Closure ile Hesaplama
+struct Game {
+    var name: String
+    
+    // Lazy closure: İlk erişimde çalışır
+    lazy var mapData: String = {
+        print("🗺️ Harita yükleniyor...")
+        return "Büyük Açık Dünya Haritası"
+    }()
+}
+
+var game = Game(name: "Roblox")
+print("Oyun adı: \(game.name)")
+print("İlk harita erişimi: \(game.mapData)") // Closure çalışacak
+print("İkinci harita erişimi: \(game.mapData)") // Closure çalışmayacak
+
+// MARK: - Static Property Örneği
+@MainActor
+struct Student {
+    static var classSize = 0 // Tüm Student instance'ları için ortak
+    var name: String
+    
+    init(name: String) {
+        self.name = name
+        Student.classSize += 1
+    }
+    
+    static func displayClassInfo() {
+        print("📚 Toplam öğrenci sayısı: \(classSize)")
+    }
+}
+
+let ed = Student(name: "Ed")
+let taylor = Student(name: "Taylor")
+let john = Student(name: "John")
+
+Student.displayClassInfo()
+
+// MARK: - Private Property ve Encapsulation
+struct SecureID {
+    private var id: String // Dışarıdan erişilemez
+    
+    init(id: String) {
+        self.id = id
+    }
+    
+    // Public getter - kontrollü erişim
+    func getID() -> String {
+        return "ID: ***\(id.suffix(3))" // Son 3 hane göster
+    }
+    
+    // ID'yi doğrula
+    func validateID(input: String) -> Bool {
+        return input == id
+    }
+}
+
+let secureUser = SecureID(id: "123456789")
+print(secureUser.getID()) // Maskelenmiş ID
+print("ID doğru mu? \(secureUser.validateID(input: "123456789"))")
+// print(secureUser.id) // ❌ Hata verir - private property
+
+// MARK: - Bonus: Failable Init Örneği
+struct User {
+    var username: String
+    var age: Int
+    
+    // Failable init - geçersiz değerlerde nil döner
+    init?(username: String, age: Int) {
+        guard !username.isEmpty, age >= 13 else {
+            return nil // Init başarısız
+        }
+        self.username = username
+        self.age = age
+    }
+}
+
+if let validUser = User(username: "Fırat", age: 25) {
+    print("✅ Kullanıcı oluşturuldu: \(validUser.username)")
+} else {
+    print("❌ Kullanıcı oluşturulamadı")
+}
+
+if let invalidUser = User(username: "", age: 10) {
+    print("Kullanıcı: \(invalidUser.username)")
+} else {
+    print("❌ Geçersiz kullanıcı - yaş 13'ten küçük veya username boş")
+}
+
+// MARK: - 1. Temel Class Örneği ve Kalıtım (Inheritance)
+
+/// Temel köpek sınıfı - Tüm köpeklerin ortak özelliklerini içerir
+class Dog {
+    var name: String
+    var breed: String
+    
+    init(name: String, breed: String) {
+        self.name = name
+        self.breed = breed
+    }
+    
+    /// Köpek havlama sesi - Child class'lar bu metodu override edebilir
+    func bark() {
+        print("🐕 Hav Hav!")
+    }
+}
+
+// Normal köpek oluşturma
+let poppy = Dog(name: "Poppy", breed: "French Bulldog")
+print("İsim: \(poppy.name)")
+print("Irk: \(poppy.breed)")
+poppy.bark()
+// Çıktı: 🐕 Hav Hav!
+
+print("\n--- Kalıtım Örneği ---")
+
+/// Poodle sınıfı - Dog'dan türer (Child class)
+class Poodle: Dog {
+    /// Poodle için özel init - breed otomatik "Poodle" olur
+    init(name: String) {
+        super.init(name: name, breed: "Poodle")
+    }
+    
+    /// Parent class'ın bark metodunu override ediyoruz
+    /// Poodle'lar farklı havlar!
+    override func bark() {
+        print("🐩 Yip Yip!")
+    }
+}
+
+let max = Poodle(name: "Max")
+print("\nMax (Poodle):")
+max.bark() // 🐩 Yip Yip! (Override edilmiş metod)
+
+print("\nPoppy (French Bulldog):")
+poppy.bark() // 🐕 Hav Hav! (Orijinal metod)
+
+
+// MARK: - 2. Struct vs Class: Kopyalama Davranışı Farkı
+
+print("\n\n=== STRUCT ÖRNEĞİ (Value Type) ===")
+
+/// Struct - Value Type (Değer Tipi)
+/// Kopyalandığında tamamen YENİ bir kopya oluşturulur
+struct SingerStruct {
+    var name = "Taylor Swift"
+}
+
+var singer = SingerStruct()
+print("Orijinal: \(singer.name)")
+
+// Kopya oluşturuyoruz
+var singerCopy = singer
+singerCopy.name = "Ed Sheeran"
+
+// Sonuç: İki FARKLI nesne var
+print("Orijinal singer: \(singer.name)")      // Taylor Swift ✅
+print("Kopya singerCopy: \(singerCopy.name)") // Ed Sheeran ✅
+print("→ Struct: Her biri FARKLI kopya!")
+
+
+print("\n=== CLASS ÖRNEĞİ (Reference Type) ===")
+
+/// Class - Reference Type (Referans Tipi)
+/// Kopyalandığında AYNI nesneye yeni bir referans oluşturulur
+class SingerClass {
+    var name = "Taylor Swift"
+}
+
+var singer1 = SingerClass()
+print("Orijinal: \(singer1.name)")
+
+// "Kopya" oluşturuyoruz (aslında aynı nesneye referans)
+var singerCopy1 = singer1
+singerCopy1.name = "Ed Sheeran"
+
+// Sonuç: İKİSİ DE AYNI nesneyi gösteriyor!
+print("Orijinal singer1: \(singer1.name)")       // Ed Sheeran 😱
+print("'Kopya' singerCopy1: \(singerCopy1.name)") // Ed Sheeran 😱
+print("→ Class: Her ikisi de AYNI nesneyi gösteriyor!")
+
+
+// MARK: - 3. Deinitializer (Yıkıcı Metod) Örneği
+
+print("\n\n=== DEINİTİALİZER ÖRNEĞİ ===")
+
+/// Book sınıfı - Deinitializer ile bellek yönetimini gösterir
+class Book {
+    var name: String
+    
+    init(name: String) {
+        self.name = name
+        print("📖 '\(name)' kitabı oluşturuldu")
+    }
+    
+    /// Deinitializer - Nesne bellekten silinirken otomatik çağrılır
+    /// Sadece class'larda kullanılabilir, struct'larda YOKTUR
+    deinit {
+        print("🗑️ '\(name)' kitabı bellekten silindi")
+    }
+}
+
+/// Fonksiyon bitince book1 ve book2 otomatik yok edilir
+func testScope() {
+    print("\n--- Fonksiyon Başlatılıyor ---")
+    
+    let book1 = Book(name: "iOS Geliştirme")
+    let book2 = Book(name: "Swift Öğreniyorum")
+    
+    print("--- Fonksiyon Sona Eriyor ---")
+    // Fonksiyon bitince deinit otomatik çağrılacak
+}
+
+testScope()
+print("--- Fonksiyon Tamamlandı, Bellek Temizlendi ---\n")
+
+// Beklenen Çıktı:
+// --- Fonksiyon Başlatılıyor ---
+// 📖 'iOS Geliştirme' kitabı oluşturuldu
+// 📖 'Swift Öğreniyorum' kitabı oluşturuldu
+// --- Fonksiyon Sona Eriyor ---
+// 🗑️ 'Swift Öğreniyorum' kitabı bellekten silindi
+// 🗑️ 'iOS Geliştirme' kitabı bellekten silindi
+// --- Fonksiyon Tamamlandı, Bellek Temizlendi ---
+
+
+// MARK: - 4. Class Constant Enforcement (Sabit Zorlama)
+
+print("\n=== CLASS: LET İLE OLUŞTURULSA BİLE VAR PROPERTY DEĞİŞİR ===")
+
+/// Dancer sınıfı - let property değişmez
+class Dancer {
+    let name = "Taylor Swift"  // let - değiştirilemez
+    var age = 33               // var - değiştirilebilir
+}
+
+// let ile instance oluşturduk
+let dancer = Dancer()
+
+// let property değiştirilemez
+// dancer.name = "Ed Sheeran" // ❌ HATA! Property let
+
+// Ama var property değiştirilebilir!
+dancer.age = 34 // ✅ ÇALIŞIR! Property var
+
+print("İsim: \(dancer.name)")  // Taylor Swift
+print("Yaş: \(dancer.age)")    // 34
+
+print("→ Class: let instance olsa bile, var property'ler değiştirilebilir!")
+
+
+// MARK: - 5. Kapsamlı Karşılaştırma Örneği
+
+print("\n\n=== STRUCT VS CLASS KAPSAMLI KARŞILAŞTIRMA ===")
+
+// STRUCT ÖRNEK
+struct GameCharacterStruct {
+    var name: String
+    var health: Int
+    
+    mutating func takeDamage(amount: Int) {
+        health -= amount
+        print("💔 \(name) hasar aldı. Kalan can: \(health)")
+    }
+}
+
+print("\n--- Struct Testi ---")
+var warrior1 = GameCharacterStruct(name: "Savaşçı-1", health: 100)
+var warrior2 = warrior1  // YENİ KOPYA
+warrior2.name = "Savaşçı-2"
+warrior2.takeDamage(amount: 30)
+
+print("warrior1: \(warrior1.name), Can: \(warrior1.health)") // 100 ✅
+print("warrior2: \(warrior2.name), Can: \(warrior2.health)") // 70 ✅
+print("→ İki FARKLI karakter!")
+
+
+// CLASS ÖRNEK
+class GameCharacterClass {
+    var name: String
+    var health: Int
+    
+    init(name: String, health: Int) {
+        self.name = name
+        self.health = health
+    }
+    
+    func takeDamage(amount: Int) {
+        health -= amount
+        print("💔 \(name) hasar aldı. Kalan can: \(health)")
+    }
+    
+    deinit {
+        print("👋 \(name) oyundan ayrıldı")
+    }
+}
+
+print("\n--- Class Testi ---")
+let mage1 = GameCharacterClass(name: "Büyücü-1", health: 100)
+let mage2 = mage1  // AYNI nesneye referans
+mage2.name = "Büyücü-2"
+mage2.takeDamage(amount: 30)
+
+print("mage1: \(mage1.name), Can: \(mage1.health)") // 70 😱
+print("mage2: \(mage2.name), Can: \(mage2.health)") // 70 😱
+print("→ AYNI karaktere iki referans!")
+
+
+// MARK: - 6. Final Class Örneği
+
+print("\n\n=== FINAL CLASS ÖRNEĞİ ===")
+
+/// Final class - Bu class'tan türetilemez (inheritance yapılamaz)
+final class PaymentProcessor {
+    private var balance: Double
+    
+    init(balance: Double) {
+        self.balance = balance
+    }
+    
+    func processPayment(amount: Double) -> Bool {
+        guard amount > 0, amount <= balance else {
+            print("❌ Ödeme başarısız!")
+            return false
+        }
+        balance -= amount
+        print("✅ \(amount)₺ ödeme yapıldı. Kalan bakiye: \(balance)₺")
+        return true
+    }
+}
+
+let processor = PaymentProcessor(balance: 1000)
+processor.processPayment(amount: 250)
+
+// Bu class'tan türeyemezsiniz!
+// class MyPaymentProcessor: PaymentProcessor { } // ❌ HATA!
+print("→ Final class: Kalıtım alınamaz, kritik işlemler korunur!")
+
+
+// MARK: - 7. Özet ve Karşılaştırma
+
+print("\n\n=== ÖZET ===")
+print("""
+📊 STRUCT vs CLASS FARKLARI:
+
+1️⃣ Kalıtım:
+   • Struct: ❌ Kalıtım YOK
+   • Class:  ✅ Kalıtım VAR (override, super, final)
+
+2️⃣ Kopyalama:
+   • Struct: 📦 Value Type - Gerçek kopya oluşur
+   • Class:  🔗 Reference Type - Aynı nesneye referans
+
+3️⃣ Deinitializer:
+   • Struct: ❌ deinit YOK
+   • Class:  ✅ deinit VAR - Temizlik işlemleri
+
+4️⃣ Constant Enforcement:
+   • Struct: let instance → Hiçbir şey değişmez
+   • Class:  let instance → var property'ler değişir
+
+5️⃣ Ne zaman kullanmalı:
+   • Struct: Basit veri, değer semantiği, varsayılan seçim
+   • Class:  Kalıtım, referans semantiği, deinit gerekiyorsa
+""")
